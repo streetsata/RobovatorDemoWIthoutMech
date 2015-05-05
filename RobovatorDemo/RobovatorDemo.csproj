@@ -38,6 +38,10 @@
     <Reference Include="AForge.Controls">
       <HintPath>..\..\..\Installs\Development\Libraries\AForge.NET Framework-2.2.5-(libs only)\Release\AForge.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Installs\Development\Libraries\AForge.NET Framework-2.2.5-(libs only)\Release\AForge.Imaging.dll</HintPath>
+    </Reference>
     <Reference Include="AForge.Imaging.Formats">
       <HintPath>..\..\..\Installs\Development\Libraries\AForge.NET Framework-2.2.5-(libs only)\Release\AForge.Imaging.Formats.dll</HintPath>
     </Reference>
