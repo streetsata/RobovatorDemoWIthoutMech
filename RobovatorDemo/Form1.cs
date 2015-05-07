@@ -22,11 +22,10 @@ namespace RobovatorDemo
         private YCbCrFiltering filter;
         private Grayscale grayscaleFilter = new Grayscale(0.2125, 0.7154, 0.0721);
         private BlobCounter blobCounter = new BlobCounter();
-        private float maxCb;
-        private float minCb;
-        private float maxCr;
-        private float minCr;
-
+        private float maxCb = 0.0f;
+        private float minCb = -500.0f;
+        private float maxCr = 0.0f;
+        private float minCr = -500.0f;
 
         public Form1()
         {
@@ -34,10 +33,11 @@ namespace RobovatorDemo
 
             filter = new YCbCrFiltering();
 
-            blobCounter.MinWidth = 30;
-            blobCounter.MinHeight = 30;
-            blobCounter.FilterBlobs = true;
-            blobCounter.ObjectsOrder = ObjectsOrder.Size;
+            sliderControl1.ManipulatorPosition = -1.0f;
+            sliderControl2.ManipulatorPosition = 0.0f;
+            sliderControl3.ManipulatorPosition = 0.0f;
+            sliderControl4.ManipulatorPosition = -1.0f;
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -50,8 +50,6 @@ namespace RobovatorDemo
 
             videoSourcePlayer1.VideoSource = file;
             videoSourcePlayer1.Start();
-            //videoSourcePlayer2.VideoSource = asyncSource;
-            //videoSourcePlayer2.Start();
         }
 
         int tmp = 0;
@@ -60,17 +58,18 @@ namespace RobovatorDemo
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             videoSourcePlayer1.Stop();
+            Application.Exit();
         }
 
         private void videoSourcePlayer1_NewFrame(object sender, ref Bitmap image)
         {
 
-            //if (tmp <= 1)
-            //{
-            //    tmp++;
-            //    return;
-            //}
-            //tmp = 0;
+            if (tmp <= 1)
+            {
+                tmp++;
+                return;
+            }
+            tmp = 0;
 
             Bitmap tmpImg = (Bitmap)image.Clone();
             
@@ -78,21 +77,27 @@ namespace RobovatorDemo
             filter.Cb = new Range(minCb, maxCb);
             filter.Cr = new Range(minCr, maxCr);
             filter.ApplyInPlace(tmpImg);
-            
-            //BitmapData objectsData = image.LockBits(new Rectangle(0, 0,
-            //    image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
-            //UnmanagedImage grayImage = grayscaleFilter.Apply(new UnmanagedImage(objectsData));
-            //image.UnlockBits(objectsData);
 
-
+            blobCounter.MinWidth = 30;
+            blobCounter.MinHeight = 30;
+            blobCounter.FilterBlobs = true;
             blobCounter.ProcessImage(tmpImg);
             Rectangle[] rects = blobCounter.GetObjectsRectangles();
-            Graphics g = Graphics.FromImage(tmpImg);
-            Pen pen = new Pen(Color.FromArgb(160, 255, 160), 5);
             foreach (Rectangle recs in rects)
                 if (rects.Length > 0)
-                    g.DrawRectangle(pen, rects[0]);
-            g.Dispose();
+                {
+                    foreach (Rectangle objectRect in rects)
+                    {
+                        Graphics g = Graphics.FromImage(tmpImg);
+                        using (Pen pen = new Pen(Color.FromArgb(160, 255, 160), 5))
+                        {
+                            g.DrawRectangle(pen, objectRect);
+                        }
+
+                        g.Dispose();
+                    }
+                }
+
             pictureBox1.Image = tmpImg;
 
         }
@@ -100,12 +105,6 @@ namespace RobovatorDemo
         private void sliderControl1_PositionChanged(object sender, float position)
         {
             minCb = position * 500;
-        }
-
-        private void colorSlider1_ValuesChanged(object sender, EventArgs e)
-        {
-            int tmp = 0;
-
         }
 
         private void sliderControl2_PositionChanged(object sender, float position)
