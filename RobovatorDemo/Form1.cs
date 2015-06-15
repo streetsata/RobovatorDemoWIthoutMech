@@ -28,6 +28,7 @@ namespace RobovatorDemo
         private float minCr = -500.0f;
         private int minWidth = 30;
         private int minHeight = 30;
+        private bool isDefault = false; 
 
         public Form1()
         {
@@ -59,6 +60,7 @@ namespace RobovatorDemo
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            videoSourcePlayer1.SignalToStop();
             videoSourcePlayer1.Stop();
             Application.Exit();
         }
@@ -76,8 +78,8 @@ namespace RobovatorDemo
             Bitmap tmpImg = (Bitmap)image.Clone();
             
             filter.Y = new Range(0, 1);
-            filter.Cb = new Range(minCb, maxCb);
-            filter.Cr = new Range(minCr, maxCr);
+            filter.Cb = new Range(minCb / 1000.0f, maxCb / 1000.0f);
+            filter.Cr = new Range(minCr / 1000.0f, maxCr / 1000.0f);
             filter.ApplyInPlace(tmpImg);
 
             blobCounter.MinWidth = minWidth;
@@ -105,7 +107,7 @@ namespace RobovatorDemo
         }
 
         private void sliderControl1_PositionChanged(object sender, float position)
-        {
+        {            
             minCb = position * 500;
             label5.Text = minCb.ToString();
         }
@@ -138,5 +140,15 @@ namespace RobovatorDemo
             this.minWidth = (int)numericUpDown2.Value;
         }
 
+        private void videoSourcePlayer1_PlayingFinished(object sender, ReasonToFinishPlaying reason)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                videoSourcePlayer1.SignalToStop();
+                videoSourcePlayer1.Stop();
+                videoSourcePlayer1.Start();
+            });
+            
+        }
     }
 }

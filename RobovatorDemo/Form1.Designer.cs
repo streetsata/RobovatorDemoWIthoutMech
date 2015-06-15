@@ -76,6 +76,7 @@
             this.videoSourcePlayer1.Text = "videoSourcePlayer1";
             this.videoSourcePlayer1.VideoSource = null;
             this.videoSourcePlayer1.NewFrame += new AForge.Controls.VideoSourcePlayer.NewFrameHandler(this.videoSourcePlayer1_NewFrame);
+            this.videoSourcePlayer1.PlayingFinished += new AForge.Video.PlayingFinishedEventHandler(this.videoSourcePlayer1_PlayingFinished);
             // 
             // pictureBox1
             // 
